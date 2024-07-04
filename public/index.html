@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Google Drive API with Socket.IO</title>
+  <script src="https://cdn.socket.io/4.1.3/socket.io.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Google Drive API with Socket.IO</h1>
+
+  <div id="filesList">
+    <h2>Files List</h2>
+    <ul id="files"></ul>
+  </div>
+
+  <div id="permission">
+    <h2>File Permissions</h2>
+    <!-- <ul id="permissions"></ul> -->
+    <input type="text" id="fileId" placeholder="Enter File ID">
+    <button id="getFilePermissions">Permissions</button>
+    <ul id="permissions"></ul>
+  </div>
+
+  <div id="downloadFile">
+    <h2>Download File</h2>
+    <input type="text" id="fileId" placeholder="Enter File ID">
+    <button id="downloadButton">Download</button>
+  </div>
+
+  <h2>Google Drive Real-Time Updates</h2>
+  <input type="text" id="watchFileId" placeholder="Enter file ID to watch" />
+  <button id="watchButton">Watch File</button>
+  <ul id="permissionsData"></ul>
+
+  <script>
+    const socket = io('http://localhost:3000');
+
+    // Function to list files
+    function listFiles() {
+      $.ajax({
+        url: 'http://localhost:3000/files',
+        method: 'GET',
+        success: function(data) {
+          const filesList = document.getElementById('files');
+          filesList.innerHTML = '';
+          data.forEach(file => {
+            const li = document.createElement('li');
+            li.textContent = `Id: ${file.id} Name: ${file.name}`;
+            filesList.appendChild(li);
+          });
+        },
+        error: function(err) {
+          console.error('Error fetching files:', err);
+        }
+      });
+    }
+
+    document.getElementById('getFilePermissions').addEventListener('click', function() {
+        getFilePermissions();
+    });
+
+    // Function to get file permissions
+    function getFilePermissions() {
+      const fileId = document.getElementById('fileId').value;
+      console.log('15E1szmstdFPm9fUiPFCB_EplMPZUlPH4hhh, ', fileId)
+      $.ajax({
+        url: `http://localhost:3000/files/${fileId}/permissions`,
+        method: 'GET',
+        success: function(data) {
+          const permissionsList = document.getElementById('permissions');
+          console.log('permissionsListjjjj', permissionsList)
+          permissionsList.innerHTML = '';
+          data.forEach(permission => {
+            const li = document.createElement('li');
+            li.textContent = JSON.stringify(permission);
+            permissionsList.appendChild(li);
+          });
+        },
+        error: function(err) {
+          console.error('Error fetching permissions:', err);
+        }
+      });
+    }
+
+    // Function to download file
+    function downloadFile() {
+      const fileId = document.getElementById('fileId').value;
+      window.location.href = `http://localhost:3000/files/${fileId}/download`;
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      listFiles();
+
+      document.getElementById('downloadButton').addEventListener('click', function() {
+        downloadFile();
+      });
+
+      socket.on('permissionsUpdated', function(permissions) {
+        const permissionsList = document.getElementById('permissions');
+        permissionsList.innerHTML = '';
+        permissions.forEach(permission => {
+          const li = document.createElement('li');
+          li.textContent = JSON.stringify(permission);
+          permissionsList.appendChild(li);
+        });
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const socket = io('http://localhost:3000');
+  
+        function watchFile() {
+          const fileId = document.getElementById('watchFileId').value;
+          console.log('Emitting watchFile event with fileId:', fileId);
+          socket.emit('watchFile', fileId);
+  
+          socket.on('permissionsUpdated', (permissions) => {
+            console.log('Received permissionsUpdated event with data:', permissions);
+            const permissionsList = document.getElementById('permissionsData');
+            permissionsList.innerHTML = '';
+            permissions.forEach(permission => {
+              const li = document.createElement('li');
+              li.textContent = JSON.stringify(permission);
+              permissionsList.appendChild(li);
+            });
+          });
+        }
+  
+        // Attach event listener to the button
+        document.getElementById('watchButton').addEventListener('click', watchFile);
+  
+        socket.on('connect', () => {
+          console.log('Connected to server');
+        });
+  
+        socket.on('disconnect', () => {
+          console.log('Disconnected from server');
+        });
+    });
+  </script>
+</body>
+</html>

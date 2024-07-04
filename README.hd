@@ -1,0 +1,81 @@
+# Google Drive Server App
+
+## Setup
+
+### Step 1: Create a Google Cloud Project
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a new project.
+3. Enable the Google Drive API for your project:
+   - Go to the navigation menu (three horizontal lines) in the top-left corner.
+   - Select "APIs & Services" > "Library".
+   - Search for "Google Drive API" and click on it.
+   - Click "Enable".
+
+### Step 2: Create OAuth 2.0 Credentials
+
+1. Go to "APIs & Services" > "Credentials".
+2. Click on "Create Credentials" and select "OAuth 2.0 Client ID".
+3. Configure the OAuth consent screen:
+   - Choose "External" or "Internal" based on your needs and click "Create".
+   - Fill out the required fields and click "Save".
+   Navigate to APIs & Services > OAuth consent screen.
+      Fill out the necessary information, including:
+      App name
+      User support email
+      Developer contact information
+      Scopes your app requests
+4. Create OAuth 2.0 Client ID:
+   - Choose "Web application".
+   - Add "Authorized redirect URIs": `http://localhost:3000/oauth2callback`.
+   - Click "Create".
+5. Download the JSON file with your credentials.
+
+Git Clone the repository
+   1. create .env file in root folder
+   2. Add CLIENT_ID and CLIENT_SECRET in that file
+      a. CLIENT_ID=""
+      b. CLIENT_SECRET=""
+
+Set Up the Project
+   1. npm install
+   2. npm i -g nodemon (optional)
+   3. npm index.js or nodemon index.js
+   4. Go to browser and type
+      a. http://localhost:3000/
+   5. Application will be up and runnning
+   6. Go to terminal it will give the authentication url
+   7. copy the authentication url in browser, it will do the authentication
+   8. Token will get saved in token.json file to autheticate all api(s)
+
+   ## If token expires
+      1. delete local token.json file
+      2. refresh http://localhost:3000/ url in browser
+      3. to terminal it will give the authentication url
+      4. copy the authentication url in browser, it will do the authentication
+      5. Token will get saved in token.json file to autheticate all api(s)
+
+This server-side application connects to Google Drive and allows you to:
+- List files
+- Download files
+- List all users who have access to a file
+- Provide real-time updates on user access changes
+
+How To test the application
+   1. Files List Tab
+      a. It will list the files in the user google Drive
+      b. Id: 1  Name: data.txt
+
+   2. File Permissions
+      a. Enter the filed_id from above list
+      b. click on button to check the file Permissions
+
+   3. Download File
+      a. Enter the filed_id from above list
+      b. it will download the file
+
+   4. Real Time watching file 
+      a. Enter the filed_id from above list
+      b. click on button to check the file Permissions once
+      c. then it will continuously show the file permissions.
+
