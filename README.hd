@@ -31,7 +31,7 @@
    - Click "Create".
 5. Download the JSON file with your credentials.
 
-Git Clone the repository
+Git Clone the repository https://github.com/imnehashetye/drive_app.git
    1. create .env file in root folder
    2. Add CLIENT_ID and CLIENT_SECRET in that file
       a. CLIENT_ID=""
